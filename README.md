@@ -1,68 +1,67 @@
-# SnakeGame
+# SnakeGame (GameBoy hub)
 
-An SFML **GameBoy-style hub** (`GameBoy`) that launches three mini-games from one executable: **Snake**, **Hangman**, and **Wordle**. Primary source: `i222327_SnakeGame.cpp`.
+Despite the repo name, this is an SFML **GameBoy-style hub** that launches **Snake**, **Hangman**, and **Wordle** from one executable.
 
-## Overview
+**Source:** `i222327_SnakeGame.cpp` · Student id **i222327** · [rohaan2802](https://github.com/rohaan2802)
 
-Despite the repo name, this project is a multi-game console UI:
+---
 
-- Abstract `Game` interface (`startGame`, `endGame`, `render`, `goBack`)
-- Concrete games: `SnakeGame`, `HangmanGame`, `WordleGame`
-- Shared helpers: `Screen` (960×640), `Grid`, `Menu`, `WordManager`, `DisplayManager`
-- Entry point creates `GameBoy` and runs the main SFML window loop
+## Table of contents
 
-Assets are loaded from `Images/` (grid, snake, food, backgrounds, fonts) and WAV files (`game.wav`, `snake.wav`).
+1. [Hub architecture](#hub-architecture)
+2. [Snake](#snake)
+3. [Hangman](#hangman)
+4. [Wordle](#wordle)
+5. [Build and assets](#build-and-assets)
+6. [Play](#play)
 
-## Features
+---
 
-### Hub (GameBoy)
-- Mouse-driven main menu: Play, Instructions, Quit
-- Game select screen for Hangman / Snake / Wordle
-- Instructions overlay describing all three games
-- Startup and per-game sound effects
+## Hub architecture
 
-### Snake
-- Classic grow-on-food snake with sprite segments
-- Three difficulty levels (different speeds) via clickable level UI (`snakeLevels.png`)
-- Score display, pause menu (Resume / Restart), game-over flow
-- Grid background from `Images/grid.png`
+Abstract `Game`: `startGame`, `endGame`, `render`, `goBack`.
 
-### Hangman
-- Word guessing with hangman visuals managed by `HangmanGame` + `WordManager` / `DisplayManager`
+| Class | Role |
+|-------|------|
+| `GameBoy` | Main window loop, menu hit-boxes, owns current `Game*` |
+| `Screen` | **960×640** |
+| `Grid` | Snake playfield helper |
+| `Menu` | Play / Instructions / Quit |
+| `WordManager` / `DisplayManager` | Hangman/Wordle words and drawing |
+| `SnakeGame` `HangmanGame` `WordleGame` | Concrete games |
 
-### Wordle
-- Word-guessing puzzle flow implemented in `WordleGame`
+Startup + per-game **WAV**: `game.wav`, `snake.wav`. Mouse-driven menus.
 
-## Tech stack
+**Instructions** overlay describes all three games. **Quit** closes the window. `goBack()` returns to the hub.
 
-| Component | Technology |
-|-----------|------------|
-| Language | C++ |
-| Graphics / audio | SFML (`Graphics`, `Audio`) |
-| Resolution | 960×640 (`Screen`) |
+---
 
-## Project structure
+## Snake
 
-```
-SnakeGame/
-└── i222327_SnakeGame.cpp   # All classes + main()
-```
+- Grow-on-food, sprite segments (`Images/snake.png`, `food.png`, `grid.png`)  
+- **Three difficulties** via `snakeLevels.png` click regions (`speed = 10` etc. in the level branch)  
+- Score HUD  
+- Pause: Resume / Restart  
+- Game-over flow  
+- Direction keys handled inside `SnakeGame`
 
-Expected runtime assets (referenced in code; supply beside the binary):
+---
 
-```
-Images/grid.png, snake.png, food.png, snakeLevels.png, arial.ttf,
-Images/buttons.png, background.jpg, …
-game.wav, snake.wav
-```
+## Hangman
 
-## How to build / run
+Word guess + hangman stages. `WordManager` supplies the secret; `DisplayManager` draws gallows / letters. Keyboard letter input as implemented in `HangmanGame`.
 
-### Requirements
+---
 
-- C++ compiler with SFML 2.x
+## Wordle
 
-### Example (g++)
+Fixed-length guess grid, color feedback (exact/present/absent) as implemented in `WordleGame`. Word list lives with `WordManager`.
+
+---
+
+## Build and assets
+
+C++17 + SFML Graphics/Window/System/Audio.
 
 ```bash
 g++ -std=c++17 i222327_SnakeGame.cpp -o SnakeGame \
@@ -70,24 +69,30 @@ g++ -std=c++17 i222327_SnakeGame.cpp -o SnakeGame \
 ./SnakeGame
 ```
 
-Ensure `Images/` and audio files are on the working-directory search path used by `loadFromFile`.
+Working directory must see:
 
-## Usage
+```text
+Images/grid.png, snake.png, food.png, snakeLevels.png, arial.ttf,
+Images/buttons.png, background.jpg, …
+game.wav, snake.wav
+```
 
-1. Run the app — dramatic start sound plays; main menu buttons appear.
-2. Click **Play** → choose Hangman, Snake, or Wordle by clicking the corresponding region.
-3. **Snake:** pick Level 1/2/3, then control the snake (direction keys as handled in `SnakeGame`); pause for Resume/Restart; grow by eating food.
-4. **Hangman / Wordle:** follow on-screen prompts for letter/word input.
-5. Use each game’s back/menu path (`goBack()`) to return to the hub.
-6. Instructions button shows the in-app help text; Quit closes the window.
+(`loadFromFile` paths are relative.)
 
-## How to extend / modify
+---
 
-- Add a fourth game by subclassing `Game` and wiring a new hit-box + `new YourGame` in `GameBoy::start`.
-- Tune Snake speeds in the level-selection branch (`speed = 10`, etc.).
-- Replace assets under `Images/` without changing code if filenames stay the same.
-- Expand word lists inside `WordManager` for Hangman/Wordle.
+## Play
+
+1. Start sound → main menu.  
+2. **Play** → click Hangman / Snake / Wordle regions.  
+3. Snake: pick Level 1/2/3, then play; pause for Resume/Restart.  
+4. Hangman/Wordle: on-screen prompts.  
+5. Instructions / back / Quit.
+
+**Extend:** fourth `Game` subclass + hit-box in `GameBoy::start`; expand word lists; retune Snake speeds.
+
+---
 
 ## Author
 
-**rohaan2802** (student id referenced in filename: i222327) — [https://github.com/rohaan2802](https://github.com/rohaan2802)
+**rohaan2802** (i222327) · [https://github.com/rohaan2802](https://github.com/rohaan2802)
