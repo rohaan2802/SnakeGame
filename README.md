@@ -1,4 +1,4 @@
-# SnakeGame (GameBoy hub)
+# Snake Game (GameBoy hub)
 
 Despite the repository name, this is **not** a `windows.h` / `conio.h` console snake. The only source file, `i222327_SnakeGame.cpp`, is an **SFML 2.x GameBoy-style hub** that launches **Snake**, **Hangman**, and **Wordle** from one `RenderWindow`. Student id **i222327** appears in the filename.
 
